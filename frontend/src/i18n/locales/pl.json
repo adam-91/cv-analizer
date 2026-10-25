@@ -1,0 +1,26 @@
+{
+  "app": {
+    "title": "Analizator CV",
+    "analyze": "Przeanalizuj moje CV",
+    "analyzing": "Analizowanie…"
+  },
+  "upload": {
+    "placeholder": "Wybierz plik CV (PDF)"
+  },
+  "jobDescription": {
+    "placeholder": "Wklej tutaj treść ogłoszenia o pracę…"
+  },
+  "result": {
+    "scoreOutOf": "/ 100",
+    "strengths": "Mocne strony",
+    "gaps": "Braki",
+    "suggestions": "Wskazówki",
+    "matchedKeywords": "Dopasowane słowa kluczowe",
+    "missingKeywords": "Brakujące słowa kluczowe"
+  },
+  "errors": {
+    "noFile": "Wybierz plik CV.",
+    "noDescription": "Wklej treść ogłoszenia o pracę.",
+    "generic": "Coś poszło nie tak. Spróbuj ponownie."
+  }
+}

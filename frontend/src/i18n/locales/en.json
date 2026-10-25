@@ -1,0 +1,26 @@
+{
+  "app": {
+    "title": "CV Analyzer",
+    "analyze": "Analyze my CV",
+    "analyzing": "Analyzing…"
+  },
+  "upload": {
+    "placeholder": "Choose a CV file (PDF)"
+  },
+  "jobDescription": {
+    "placeholder": "Paste the job description here…"
+  },
+  "result": {
+    "scoreOutOf": "/ 100",
+    "strengths": "Strengths",
+    "gaps": "Gaps",
+    "suggestions": "Suggestions",
+    "matchedKeywords": "Matched keywords",
+    "missingKeywords": "Missing keywords"
+  },
+  "errors": {
+    "noFile": "Please choose a CV file.",
+    "noDescription": "Please paste the job description.",
+    "generic": "Something went wrong. Please try again."
+  }
+}
