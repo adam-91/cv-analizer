@@ -49,7 +49,13 @@ export default function App() {
   return (
     <div className="app">
       <header className="app-header">
-        <h1>{t('app.title')}</h1>
+        <div className="brand">
+          <img className="logo" src="/logo.png" alt={t('app.title')} />
+          <div>
+            <h1 className="app-title">{t('app.title')}</h1>
+            <p className="app-tagline">{t('app.tagline')}</p>
+          </div>
+        </div>
         <LanguageSwitcher />
       </header>
 

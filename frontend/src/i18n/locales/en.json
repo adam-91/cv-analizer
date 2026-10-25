@@ -1,6 +1,7 @@
 {
   "app": {
     "title": "CV Analyzer",
+    "tagline": "Match your CV to your dream job offer",
     "analyze": "Analyze my CV",
     "analyzing": "Analyzing…"
   },
