@@ -69,8 +69,8 @@ def analyze_cv(cv_text: str, job_description: str, language: str) -> dict:
     )
 
     logger.info(
-        "Calling Gemini model=%s language=%s cv_chars=%d job_chars=%d",
-        settings.model_name,
+        "Calling Gemini models=%s language=%s cv_chars=%d job_chars=%d",
+        settings.model_list,
         language,
         len(cv_text),
         len(job_description),
@@ -78,21 +78,29 @@ def analyze_cv(cv_text: str, job_description: str, language: str) -> dict:
 
     client = genai.Client(api_key=settings.google_api_key)
 
-    try:
-        response = client.models.generate_content(
-            model=settings.model_name,
-            contents=prompt,
-            config=types.GenerateContentConfig(
-                response_mime_type="application/json",
-                response_schema=_RESPONSE_SCHEMA,
-                temperature=0.2,
-            ),
-        )
-    except Exception as exc:  # noqa: BLE001 - log any model/network/auth failure
-        logger.exception(
-            "Gemini API call failed (model=%s): %s", settings.model_name, exc
-        )
-        raise GeminiError(f"Gemini API call failed: {exc}") from exc
+    last_error: Exception | None = None
+    for model in settings.model_list:
+        try:
+            response = client.models.generate_content(
+                model=model,
+                contents=prompt,
+                config=types.GenerateContentConfig(
+                    response_mime_type="application/json",
+                    response_schema=_RESPONSE_SCHEMA,
+                    temperature=0.2,
+                ),
+            )
+        except Exception as exc:  # noqa: BLE001 - log any model/network/auth failure
+            logger.warning("Gemini API call failed (model=%s): %s", model, exc)
+            last_error = exc
+            continue
+
+        break
+    else:
+        logger.error("All Gemini models failed: %s", settings.model_list)
+        raise GeminiError(
+            f"Gemini API call failed for all models: {last_error}"
+        ) from last_error
 
     try:
         data = json.loads(response.text)

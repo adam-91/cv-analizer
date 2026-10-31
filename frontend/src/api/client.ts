@@ -26,14 +26,23 @@ export async function pingHealth(): Promise<void> {
   }
 }
 
-export async function analyzeCv(
-  cvFile: File,
-  jobDescription: string,
-  language: string,
-): Promise<AnalysisResult> {
+export interface AnalyzeParams {
+  cvFile: File
+  jobDescription: string
+  jobUrl: string
+  language: string
+}
+
+export async function analyzeCv({
+  cvFile,
+  jobDescription,
+  jobUrl,
+  language,
+}: AnalyzeParams): Promise<AnalysisResult> {
   const form = new FormData()
   form.append('cv_file', cvFile)
   form.append('job_description', jobDescription)
+  form.append('job_url', jobUrl)
   form.append('language', language)
 
   const res = await fetch(`${API_URL}/api/analyze`, {

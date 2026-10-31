@@ -8,8 +8,16 @@
   "upload": {
     "placeholder": "Choose a CV file (PDF)"
   },
+  "jobSource": {
+    "label": "Job description source",
+    "text": "Paste text",
+    "url": "Paste link"
+  },
   "jobDescription": {
     "placeholder": "Paste the job description here…"
+  },
+  "jobUrl": {
+    "placeholder": "Paste the job posting URL…"
   },
   "result": {
     "scoreOutOf": "/ 100",
@@ -22,6 +30,8 @@
   "errors": {
     "noFile": "Please choose a CV file.",
     "noDescription": "Please paste the job description.",
+    "noUrl": "Please paste the job posting URL.",
+    "invalidUrl": "The URL must start with http:// or https://.",
     "generic": "Something went wrong. Please try again."
   }
 }

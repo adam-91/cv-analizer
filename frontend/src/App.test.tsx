@@ -69,7 +69,12 @@ describe('App', () => {
 
     await fillAndSubmit(user)
 
-    expect(mockedAnalyzeCv).toHaveBeenCalledWith(cvFile, 'Job description', 'pl')
+    expect(mockedAnalyzeCv).toHaveBeenCalledWith({
+      cvFile,
+      jobDescription: 'Job description',
+      jobUrl: '',
+      language: 'pl',
+    })
     expect(await screen.findByText('Great match')).toBeInTheDocument()
   })
 
@@ -95,5 +100,49 @@ describe('App', () => {
     await fillAndSubmit(user)
 
     expect(await screen.findByText('Server exploded')).toBeInTheDocument()
+  })
+
+  it('submits a URL when the link mode is selected', async () => {
+    const user = userEvent.setup()
+    mockedAnalyzeCv.mockResolvedValue(makeResult({ summary: 'From URL' }))
+    render(<App />)
+
+    await user.upload(screen.getByLabelText('Wybierz plik CV (PDF)'), cvFile)
+    await user.click(screen.getByRole('tab', { name: 'Wklej link' }))
+    await user.type(screen.getByPlaceholderText(/link do oferty pracy/), 'https://example.com/job')
+    await user.click(screen.getByRole('button', { name: 'Przeanalizuj moje CV' }))
+
+    expect(mockedAnalyzeCv).toHaveBeenCalledWith({
+      cvFile,
+      jobDescription: '',
+      jobUrl: 'https://example.com/job',
+      language: 'pl',
+    })
+    expect(await screen.findByText('From URL')).toBeInTheDocument()
+  })
+
+  it('shows an error when submitting an empty URL', async () => {
+    const user = userEvent.setup()
+    render(<App />)
+
+    await user.upload(screen.getByLabelText('Wybierz plik CV (PDF)'), cvFile)
+    await user.click(screen.getByRole('tab', { name: 'Wklej link' }))
+    await user.click(screen.getByRole('button', { name: 'Przeanalizuj moje CV' }))
+
+    expect(screen.getByText('Wklej link do oferty pracy.')).toBeInTheDocument()
+    expect(mockedAnalyzeCv).not.toHaveBeenCalled()
+  })
+
+  it('shows an error for an invalid URL scheme', async () => {
+    const user = userEvent.setup()
+    render(<App />)
+
+    await user.upload(screen.getByLabelText('Wybierz plik CV (PDF)'), cvFile)
+    await user.click(screen.getByRole('tab', { name: 'Wklej link' }))
+    await user.type(screen.getByPlaceholderText(/link do oferty pracy/), 'not-a-url')
+    await user.click(screen.getByRole('button', { name: 'Przeanalizuj moje CV' }))
+
+    expect(screen.getByText('Link musi zaczynać się od http:// lub https://.')).toBeInTheDocument()
+    expect(mockedAnalyzeCv).not.toHaveBeenCalled()
   })
 })

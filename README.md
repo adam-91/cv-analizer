@@ -44,9 +44,29 @@ cv-analizer/
 
 3. Put your key in `GOOGLE_API_KEY` in `backend/.env`.
 
+The model is configured with two environment variables:
+
+- `MODEL_NAME` — the primary model (default `gemini-3.8-flash`).
+- `FALLBACK_MODELS` — a comma-separated list of models tried in order when the
+  primary model fails (e.g. is temporarily unavailable). Default:
+  `gemini-3.6-flash,gemini-3.5-flash-lite`. The app falls back to the next model on
+  any API/network failure (such as a `503 UNAVAILABLE`), and only returns an
+  error after every configured model has failed.
+
 > The `.env` file is in `.gitignore` — it never goes into the repository.
 
 ## Running locally
+
+### One command
+
+After installing the dependencies below, start both services with:
+
+```bash
+./start.sh
+```
+
+This launches the backend (http://localhost:8000, docs `/docs`) and the
+frontend (http://localhost:5173). Press `Ctrl+C` to stop both.
 
 ### Backend
 
@@ -111,11 +131,19 @@ with `[cv-analizer]`) to the browser developer console.
   sleeping backend on Render).
 - `POST /api/analyze` — multipart/form-data:
   - `cv_file` — PDF file with the CV
-  - `job_description` — the job posting text
+  - `job_description` — the job posting text (used when `job_url` is empty)
+  - `job_url` — optional link to the job posting; when provided, the backend
+    fetches the page and extracts its text (this takes precedence over
+    `job_description`)
   - `language` — `pl` or `en`
 
   Returns JSON: `score`, `summary`, `strengths[]`, `gaps[]`, `suggestions[]`,
   `matched_keywords[]`, `missing_keywords[]`.
+
+> **Note about `job_url`:** the backend fetches the page and strips its HTML.
+> Job boards that render their content with JavaScript (e.g. LinkedIn, some
+> Pracuj.pl offers) may return little or no text because the content is not
+> present in the raw HTML.
 
 ## Deploying to Render.com
 

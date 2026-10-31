@@ -8,8 +8,16 @@
   "upload": {
     "placeholder": "Wybierz plik CV (PDF)"
   },
+  "jobSource": {
+    "label": "Źródło ogłoszenia",
+    "text": "Wklej tekst",
+    "url": "Wklej link"
+  },
   "jobDescription": {
     "placeholder": "Wklej tutaj treść ogłoszenia o pracę…"
+  },
+  "jobUrl": {
+    "placeholder": "Wklej link do oferty pracy…"
   },
   "result": {
     "scoreOutOf": "/ 100",
@@ -22,6 +30,8 @@
   "errors": {
     "noFile": "Wybierz plik CV.",
     "noDescription": "Wklej treść ogłoszenia o pracę.",
+    "noUrl": "Wklej link do oferty pracy.",
+    "invalidUrl": "Link musi zaczynać się od http:// lub https://.",
     "generic": "Coś poszło nie tak. Spróbuj ponownie."
   }
 }
