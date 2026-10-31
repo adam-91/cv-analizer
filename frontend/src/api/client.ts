@@ -15,7 +15,15 @@ async function readErrorDetail(res: Response): Promise<string> {
 }
 
 export async function pingHealth(): Promise<void> {
-  await fetch(`${API_URL}/api/health`)
+  try {
+    const res = await fetch(`${API_URL}/api/health`)
+    if (!res.ok) {
+      console.warn(`[cv-analizer] health check returned ${res.status}`)
+    }
+  } catch (err) {
+    console.error('[cv-analizer] health check failed:', err)
+    throw err
+  }
 }
 
 export async function analyzeCv(
@@ -34,7 +42,9 @@ export async function analyzeCv(
   })
 
   if (!res.ok) {
-    throw new Error(await readErrorDetail(res))
+    const detail = await readErrorDetail(res)
+    console.error(`[cv-analizer] analyze failed (${res.status}):`, detail)
+    throw new Error(detail)
   }
 
   return (await res.json()) as AnalysisResult

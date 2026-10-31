@@ -1,9 +1,12 @@
 import json
+import logging
 
 from google import genai
 from google.genai import types
 
 from app.config import settings
+
+logger = logging.getLogger(__name__)
 
 
 class GeminiError(Exception):
@@ -65,21 +68,39 @@ def analyze_cv(cv_text: str, job_description: str, language: str) -> dict:
         job_description=job_description,
     )
 
+    logger.info(
+        "Calling Gemini model=%s language=%s cv_chars=%d job_chars=%d",
+        settings.model_name,
+        language,
+        len(cv_text),
+        len(job_description),
+    )
+
     client = genai.Client(api_key=settings.google_api_key)
 
-    response = client.models.generate_content(
-        model=settings.model_name,
-        contents=prompt,
-        config=types.GenerateContentConfig(
-            response_mime_type="application/json",
-            response_schema=_RESPONSE_SCHEMA,
-            temperature=0.2,
-        ),
-    )
+    try:
+        response = client.models.generate_content(
+            model=settings.model_name,
+            contents=prompt,
+            config=types.GenerateContentConfig(
+                response_mime_type="application/json",
+                response_schema=_RESPONSE_SCHEMA,
+                temperature=0.2,
+            ),
+        )
+    except Exception as exc:  # noqa: BLE001 - log any model/network/auth failure
+        logger.exception(
+            "Gemini API call failed (model=%s): %s", settings.model_name, exc
+        )
+        raise GeminiError(f"Gemini API call failed: {exc}") from exc
 
     try:
         data = json.loads(response.text)
     except (json.JSONDecodeError, AttributeError) as exc:
+        logger.warning(
+            "Failed to parse Gemini response as JSON: %r",
+            getattr(response, "text", None),
+        )
         raise GeminiError("Failed to parse the model response as JSON.") from exc
 
     try:
@@ -87,4 +108,5 @@ def analyze_cv(cv_text: str, job_description: str, language: str) -> dict:
     except (KeyError, TypeError, ValueError):
         data["score"] = 0
 
+    logger.info("Gemini analysis completed score=%s", data.get("score"))
     return data

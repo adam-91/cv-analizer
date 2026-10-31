@@ -84,6 +84,27 @@ uv pip install -r requirements-dev.txt
 .venv/bin/python -m pytest
 ```
 
+## Logs
+
+The backend logs to **stdout/stderr** and to a rotating file
+(`backend/logs/app.log` by default). To watch the file while the app runs in
+the background:
+
+```bash
+cd backend
+tail -f logs/app.log
+```
+
+Configuration via environment variables:
+
+- `LOG_LEVEL` — minimum level to log (`DEBUG`, `INFO`, `WARNING`, `ERROR`;
+  default `INFO`). Use `DEBUG` to also log health checks.
+- `LOG_FILE` — path to the log file (default `logs/app.log`). Set to an empty
+  string to disable file logging and keep only console output.
+
+The frontend also writes `console.error` / `console.warn` messages (prefixed
+with `[cv-analizer]`) to the browser developer console.
+
 ## API
 
 - `GET /api/health` — health check (the frontend pings it to "wake up" the

@@ -40,6 +40,7 @@ export default function App() {
       const data = await analyzeCv(cvFile, jobDescription, language)
       setResult(data)
     } catch (err) {
+      console.error('[cv-analizer] analyze error:', err)
       setError(err instanceof Error ? err.message : t('errors.generic'))
     } finally {
       setLoading(false)

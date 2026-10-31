@@ -9,7 +9,7 @@ class Settings(BaseSettings):
     )
 
     google_api_key: str = ""
-    model_name: str = "gemini-2.5-flash"
+    model_name: str = "gemini-3.8-flash"
 
     cors_origins: str = "*"
 
